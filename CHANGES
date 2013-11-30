@@ -1,3 +1,6 @@
+1.5.1 (trunk)
+* Make js_of_ocaml optional in the Makefile (@avsm)
+
 1.5.0 (Oct 2013)
 * Abstract interface over Async and Lwt (@jonludlam)
 * Remove some debug messages (@djs55)

@@ -1,12 +1,14 @@
 OCAMLC = ocamlfind ocamlc
 OCAMLOPT = ocamlfind ocamlopt
 OCAMLFLAGS = -annot -g
-PACKS = xmlm,lwt,js_of_ocaml,js_of_ocaml.syntax
+PACKS = xmlm,lwt
+JSPACKS = js_of_ocaml,js_of_ocaml.syntax
 
 ICAMLP4 = -I $(shell ocamlfind query camlp4) \
 	-I $(shell ocamlfind query type_conv)    \
-	-I $(shell ocamlfind query js_of_ocaml)  \
 	-I $(shell ocamlfind query lwt)
+
+JSICAMLP4 = -I $(shell ocamlfind query js_of_ocaml)
 
 DOCDIR  = /myrepos/xen-api-libs.hg/doc
 TARGETS = \
@@ -14,12 +16,18 @@ TARGETS = \
 	pa_rpc.cma idl.cma \
 	xmlrpc.cmi xmlrpc.cmo xmlrpc.o xmlrpc.cmx \
 	jsonrpc.cmi jsonrpc.cmo jsonrpc.o jsonrpc.cmx \
-	rpc_client.cmi rpc_client.cmo rpc_client.o rpc_client.cmx \
+	rpc_client.cmi rpc_client.cmo rpc_client.o rpc_client.cmx
+
+JSTARGETS = \
 	rpc_client_js.cmi rpc_client_js.cmo rpc_client_js_helper.cmo \
 	rpc_client.cmo rpc_client_js.cma
 
-.PHONY: all clean
+.PHONY: build build-js clean
 all: $(TARGETS)
+	@ :
+
+js: $(TARGETS) $(JSTARGETS)
+	@ :
 
 pa_module_conv.cmo: pa_module_conv.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c -package camlp4 -pp "camlp4orf" -I $(shell ocamlfind query camlp4) -o $@ $^
@@ -59,7 +67,7 @@ rpc_client_js.cmo: rpc_client_js.ml rpc_client_js_helper.cmo
 
 .PHONY: install
 install: INSTALL_PATH = $(DESTDIR)$(shell ocamlfind printconf destdir)
-install: all
+install: 
 	ocamlfind install -destdir "$(INSTALL_PATH)" rpclib META $(TARGETS)
 
 .PHONY: uninstall
